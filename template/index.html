@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FILM-Secure · AI Video Enhancement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrapper">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/>
+            <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text"><span>FILM</span>-SECURE</div>
+      </div>
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        <span>PIPELINE ACTIVE</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrapper">
+
+    <div class="hero">
+      <div class="hero-tag">AI · Video Enhancement · MLOps</div>
+      <h1>Enhance Your<em>Surveillance Feed</em></h1>
+      <p class="hero-sub">Upload low-frame-rate footage. Our FILM interpolation model doubles your frame rate — turning 5 FPS into 10 FPS, or 15 FPS into 30 FPS, with AI-reconstructed intermediate frames.</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-num">2×</div>
+        <div class="stat-label">Frame Boost</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">FILM</div>
+        <div class="stat-label">Model</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">GPU</div>
+        <div class="stat-label">Accelerated</div>
+      </div>
+    </div>
+
+    <div class="config-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <div><strong>DEVELOPER SETUP REQUIRED</strong>Set <code>API_BASE_URL</code> in <code>static/app.js</code> to point to your FastAPI backend before deploying.</div>
+    </div>
+
+    <!-- ── Upload Panel ── -->
+    <div class="panel" id="upload-panel">
+      <div class="panel-title">01 · Upload Footage</div>
+
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept="video/*">
+        <div class="drop-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="drop-title">DROP VIDEO HERE</div>
+        <div class="drop-sub">or click to browse · MP4, AVI, MOV, MKV supported · max 2 GB</div>
+      </div>
+
+      <div id="file-preview" style="display:none">
+        <div class="file-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2"/>
+          </svg>
+        </div>
+        <div class="file-info">
+          <div class="file-name" id="file-name-display">—</div>
+          <div class="file-meta" id="file-meta-display">—</div>
+        </div>
+        <button class="file-remove" id="file-remove-btn">✕ REMOVE</button>
+      </div>
+
+      <input type="hidden" id="interp-factor" value="2">
+
+      <div class="settings-grid">
+        <div class="field">
+          <label>Interpolation Mode</label>
+          <div style="background:var(--bg);border:1px solid rgba(0,229,200,0.3);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;color:var(--text);">2× Frame Doubling</span>
+            <span style="font-size:10px;color:var(--accent);letter-spacing:2px;border:1px solid rgba(0,229,200,0.3);padding:3px 8px;">FIXED</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Output Quality</label>
+          <div style="background:var(--bg);border:1px solid rgba(0,229,200,0.3);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;color:var(--text);">High</span>
+            <span style="font-size:10px;color:var(--accent);letter-spacing:2px;border:1px solid rgba(0,229,200,0.3);padding:3px 8px;">FIXED</span>
+          </div>
+        </div>
+        <input type="hidden" id="output-quality" value="high">
+      </div>
+
+      <button class="submit-btn" id="submit-btn" disabled>
+        ▶ PROCESS VIDEO
+      </button>
+    </div>
+
+    <!-- ── Progress Panel ── -->
+    <div class="panel" id="progress-panel">
+      <div class="panel-title">02 · Processing</div>
+
+      <div class="job-id-row">
+        <span>JOB ID</span>
+        <span class="job-id-val" id="job-id-display">—</span>
+      </div>
+
+      <div class="stage-list" id="stage-list">
+        <div class="stage" id="stage-upload">
+          <div class="stage-bullet"></div>
+          <span class="stage-name">Video Upload to S3</span>
+          <span class="stage-status">PENDING</span>
+        </div>
+        <div class="stage" id="stage-queue">
+          <div class="stage-bullet"></div>
+          <span class="stage-name">Job Queued — SageMaker Worker</span>
+          <span class="stage-status">PENDING</span>
+        </div>
+        <div class="stage" id="stage-preprocess">
+          <div class="stage-bullet"></div>
+          <span class="stage-name">Frame Extraction &amp; Preprocessing</span>
+          <span class="stage-status">PENDING</span>
+        </div>
+        <div class="stage" id="stage-inference">
+          <div class="stage-bullet"></div>
+          <span class="stage-name">FILM Model Inference (GPU EC2)</span>
+          <span class="stage-status">PENDING</span>
+        </div>
+        <div class="stage" id="stage-export">
+          <div class="stage-bullet"></div>
+          <span class="stage-name">Video Reconstruction &amp; Export</span>
+          <span class="stage-status">PENDING</span>
+        </div>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div class="log-box" id="log-box">
+        <span class="log-line accent">[FILM-SECURE] Pipeline initialised</span>
+      </div>
+    </div>
+
+    <!-- ── Result Panel ── -->
+    <div class="panel" id="result-panel">
+      <div class="panel-title">03 · Enhanced Video Ready</div>
+
+      <div class="result-grid">
+        <div class="result-card">
+          <div class="result-card-label">Original FPS</div>
+          <div class="result-card-val" id="orig-fps">—</div>
+          <div class="result-card-unit">frames / sec</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-label">Enhanced FPS</div>
+          <div class="result-card-val" id="enhanced-fps">—</div>
+          <div class="result-card-unit">frames / sec</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-label">Frames Interpolated</div>
+          <div class="result-card-val" id="frames-interp">—</div>
+          <div class="result-card-unit">new frames added</div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-label">PSNR Score</div>
+          <div class="result-card-val" id="psnr-score">—</div>
+          <div class="result-card-unit">dB (quality metric)</div>
+        </div>
+      </div>
+
+      <a class="download-btn" id="download-btn" href="#" download>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        DOWNLOAD ENHANCED VIDEO
+      </a>
+
+      <button class="reset-btn" id="reset-btn">↩ PROCESS ANOTHER VIDEO</button>
+    </div>
+
+  </div><!-- /wrapper -->
+</main>
+
+<footer>
+  <div class="wrapper" style="display:flex;justify-content:space-between;width:100%">
+    <span>FILM-SECURE © 2025 · AIT</span>
+    <span>POWERED BY FILM + AWS SAGEMAKER + MLFLOW</span>
+  </div>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
